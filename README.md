@@ -34,4 +34,4 @@ The obtained dataset has been randomly partitioned into two sets, where 70% of t
 To run the code, ensure you have Python 3.12 installed along with the required libraries listed in `requirements.txt`. You can install the dependencies using pip:
 
 ```bash
-pip install -r requirements.txt```
+pip install -r requirements.txt
