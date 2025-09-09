@@ -3,7 +3,7 @@ har_venv/
 venv/
 
 # Data directory
-data/
+raw_data/
 
 # Jupyter notebooks checkpoints
 .ipynb_checkpoints/
@@ -14,3 +14,4 @@ __pycache__/
 *.pyo
 *.pyd
 
+*.pkl

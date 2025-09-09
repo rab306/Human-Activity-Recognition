@@ -1,0 +1,12 @@
+Human Activity Recognition - External Test Results\n==================================================\n\nExternal Test Accuracy: 0.9515\n\n==================================================\nClassification Report:\n              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00       537
+           1       0.93      0.91      0.92       491
+           2       0.92      0.94      0.93       532
+           3       0.95      0.99      0.97       496
+           4       0.97      0.93      0.95       420
+           5       0.94      0.93      0.94       471
+
+    accuracy                           0.95      2947
+   macro avg       0.95      0.95      0.95      2947
+weighted avg       0.95      0.95      0.95      2947
