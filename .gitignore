@@ -1,0 +1,16 @@
+# Virtual environment
+har_venv/
+venv/
+
+# Data directory
+data/
+
+# Jupyter notebooks checkpoints
+.ipynb_checkpoints/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
