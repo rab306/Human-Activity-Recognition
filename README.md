@@ -1,37 +1,145 @@
-# Human Activity Recognition using Smartphone Sensors
+# Human Activity Recognition Pipeline
 
-This repository contains code for a machine learning project that classifies human activities based on smartphone sensor data. The project aims to predict six different activities: WALKING, WALKING_UPSTAIRS, WALKING_DOWNSTAIRS, SITTING, STANDING, and LAYING.
+A production-ready machine learning pipeline for classifying human activities using smartphone sensor data. This project demonstrates clean architecture principles, SOLID design patterns, and modern software engineering practices applied to a machine learning workflow.
 
-## Project Overview
+## 🎯 Project Overview
 
-The project involves:
+This pipeline recognizes 6 different human activities:
+- **LAYING**
+- **SITTING** 
+- **STANDING**
+- **WALKING**
+- **WALKING_DOWNSTAIRS**
+- **WALKING_UPSTAIRS**
 
-- Preprocessing and analyzing smartphone sensor data.
-- Feature engineering and selection using techniques like variance thresholding and Recursive Feature Elimination (RFE).
-- Implementing machine learning models such as XGBoost, SVM, Logistic Regression, and Random Forest.
-- Utilizing ensemble learning with a Voting Classifier to improve prediction accuracy.
-- Evaluating model performance using accuracy metrics, confusion matrices, and classification reports.
-- Testing the models on unseen data to assess generalization.
+**Key Achievement:** 95.15% accuracy on holdout test data using an ensemble of XGBoost, SVM, Random Forest, and Logistic Regression models.
 
-## Repository Structure
+## 🏗️ Architecture
 
-- `human_activity_recognition.py`: Python script containing the main model training and evaluation code.
-- `train.csv`: Dataset containing labeled sensor data used for training.
-- `test.csv`: Dataset containing unseen sensor data used for testing.
+The project follows clean architecture principles with clear separation of concerns:
 
-## Dataset 
-The data is available on kaggle (https://www.kaggle.com/datasets/uciml/human-activity-recognition-with-smartphones)
+```
+├── config/                 # Configuration Management
+│   ├── __init__.py
+│   └── config.py          # Centralized configuration using dataclasses
+├── src/
+│   ├── data/              # Data Loading & Preprocessing
+│   │   ├── __init__.py
+│   │   └── data_loader.py # Data loading, validation, train/test splits
+│   ├── features/          # Feature Engineering
+│   │   ├── __init__.py
+│   │   └── feature_selector.py # Feature selection strategies
+│   └── models/            # Machine Learning Models
+│       ├── __init__.py
+│       └── ensemble_model.py # Ensemble model with hyperparameter tuning
+├── main.py               # CLI interface and pipeline orchestration
+├── requirements.txt      # Project dependencies
+└── README.md            # This file
+```
 
-## Dataset Describtion
-The experiments have been carried out with a group of 30 volunteers within an age bracket of 19-48 years. Each person performed 
-six activities (WALKING, WALKING_UPSTAIRS, WALKING_DOWNSTAIRS, SITTING, STANDING, LAYING) wearing a smartphone (Samsung Galaxy S II) on the waist.
-Using its embedded accelerometer and gyroscope, we captured 3-axial linear acceleration and 3-axial angular velocity at a constant rate of 50Hz. 
-The experiments have been video-recorded to label the data manually. 
-The obtained dataset has been randomly partitioned into two sets, where 70% of the volunteers was selected for generating the training data and 30% the test data.
+## 📊 Machine Learning Pipeline
 
-## Installation
+### 1. Data Processing
+- **Data Loading:** Handles train.csv (7,352 samples) and test.csv (2,947 samples)
+- **Data Validation:** Checks for missing values, duplicates, data quality
+- **Train/Validation Split:** 80/20 split for model development
 
-To run the code, ensure you have Python 3.12 installed along with the required libraries listed in `requirements.txt`. You can install the dependencies using pip:
+### 2. Feature Engineering
+Three-stage feature selection pipeline:
+- **Correlation Filter:** Removes highly correlated features (threshold: 0.8)
+- **Variance Filter:** Removes low-variance features (threshold: 0.04)
+- **Recursive Feature Elimination:** Selects top 50 features using Random Forest
 
+**Feature Reduction:** 540 → 142 → 102 → 50 features
+
+### 3. Model Ensemble
+- **XGBoost Classifier:** Best individual performer (97.91% CV score)
+- **Support Vector Machine:** 96.97% CV score
+- **Random Forest:** 96.26% CV score  
+- **Logistic Regression:** 94.76% CV score
+- **Voting Classifier:** Combines all models with optimized weights [2.2, 2.0, 1.6, 1.8]
+
+### 4. Hyperparameter Optimization
+- **RandomizedSearchCV:** 30 iterations, 5-fold cross-validation
+- **Automated:** Parameter grids defined in configuration
+- **Efficient:** Parallel processing with n_jobs=-1
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Python 3.8+
+- pip package manager
+
+### Installation
 ```bash
+# Clone the repository
+git clone <repository-url>
+cd human-activity-recognition
+
+# Install dependencies
 pip install -r requirements.txt
+```
+
+### Data Setup
+Place your data files in the `raw_data/` directory:
+```
+raw_data/
+├── train.csv    # Training dataset (7,352 samples)
+└── test.csv     # Holdout test set (2,947 samples)
+```
+
+### Basic Usage
+
+#### Full Training Pipeline
+```bash
+python main.py \
+    --data_dir "raw_data" \
+    --output_dir "results/experiment_1"
+```
+
+#### Evaluation Only (with pretrained model)
+```bash
+python main.py \
+    --data_dir "raw_data" \
+    --evaluate_only \
+    --model_path "results/experiment_1/har_ensemble_model.pkl" \
+    --output_dir "results/evaluation_test"
+```
+
+#### Custom Hyperparameters
+```bash
+python main.py \
+    --data_dir "raw_data" \
+    --output_dir "results/experiment_2" \
+    --correlation_threshold 0.75 \
+    --variance_threshold 0.06 \
+    --rfe_features 60
+```
+
+## 📈 Results & Performance
+
+### Model Performance
+- **Validation Accuracy:** 97.28% (20% of train.csv)
+- **Holdout Test Accuracy:** 95.15% (test.csv)
+
+### Individual Model Cross-Validation Scores
+| Model | CV Score |
+|-------|----------|
+| XGBoost | 97.91% |
+| SVM | 96.97% |
+| Random Forest | 96.26% |
+| Logistic Regression | 94.76% |
+
+### Output Files
+The pipeline generates comprehensive results:
+```
+results/
+├── har_ensemble_model.pkl           # Trained model + feature pipeline
+├── activity_distribution.png        # Activity distribution by subject
+├── feature_selection_summary.png    # Feature selection progress
+├── confusion_matrix_validation.png  # Validation confusion matrix
+├── confusion_matrix_holdout.png     # Holdout test confusion matrix
+├── evaluation_report_validation.txt # Detailed validation metrics
+└── evaluation_report_holdout.txt    # Detailed holdout test metrics
+```
+
